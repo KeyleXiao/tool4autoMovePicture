@@ -1,5 +1,6 @@
 <?php
 session_start();
+require __DIR__.'/lib.php';
 if (!isset($_SESSION['user_id'])) { header('Location: index.php'); exit; }
 $config = require __DIR__ . '/../config.php';
 $pdo = new PDO("mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4", $config['db_user'], $config['db_pass']);
@@ -10,10 +11,12 @@ if (isset($_POST['add'])) {
     $key = random_key();
     $stmt = $pdo->prepare('INSERT INTO one_keys(one_key,remark) VALUES(?,?)');
     $stmt->execute([$key,$_POST['remark']]);
+    log_action('Generate One_Key');
 }
 if (isset($_GET['delete'])) {
     $stmt = $pdo->prepare('DELETE FROM one_keys WHERE id=?');
     $stmt->execute([$_GET['delete']]);
+    log_action('Delete One_Key '.$_GET['delete']);
 }
 $keys = $pdo->query('SELECT * FROM one_keys')->fetchAll(PDO::FETCH_ASSOC);
 ?>
