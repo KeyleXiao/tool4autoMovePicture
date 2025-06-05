@@ -2,7 +2,7 @@
 session_start();
 require __DIR__.'/lib.php';
 if (!isset($_SESSION['user_id'])) { header('Location: index.php'); exit; }
-$config = require __DIR__ . '/../config.php';
+$config = require __DIR__ . '/config.php';
 $pdo = new PDO("mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4", $config['db_user'], $config['db_pass']);
 
 function random_key($len=24){ return substr(str_shuffle(str_repeat('0123456789abcdef', $len)),0,$len); }

@@ -1,7 +1,7 @@
 <?php
 session_start();
 require __DIR__.'/lib.php';
-$configFile = __DIR__ . '/../config.php';
+$configFile = __DIR__ . '/config.php';
 if (file_exists($configFile)) {
     header('Location: index.php');
     exit;
