@@ -36,15 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="utf-8">
     <title>Login</title>
-    <style>
-        body{font-family: Arial; display:flex;justify-content:center;align-items:center;height:100vh;background:#f5f5f5;}
-        .login{background:#fff;padding:20px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,.1);}        
-        input{display:block;margin-bottom:10px;width:100%;padding:8px;}
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <style>.login{background:#fff;padding:20px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,.1);}</style>
 </head>
 <body>
 <div class="login">
-    <form method="post">
+    <form method="post" onsubmit="return validateForm()">
         <h2>Login</h2>
         <?php if($error) echo "<p style='color:red'>$error</p>"; ?>
         <input name="username" placeholder="Username" required>
@@ -52,5 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Login</button>
     </form>
 </div>
+<div id="loading" class="loading-overlay"><div>Loading...</div></div>
+<div class="toast-container"></div>
 </body>
 </html>
