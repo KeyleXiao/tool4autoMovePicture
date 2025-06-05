@@ -1,0 +1,61 @@
+<?php
+session_start();
+$configFile = __DIR__ . '/../config.php';
+if (file_exists($configFile)) {
+    header('Location: index.php');
+    exit;
+}
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $db_host = $_POST['db_host'];
+    $db_user = $_POST['db_user'];
+    $db_pass = $_POST['db_pass'];
+    $db_name = $_POST['db_name'];
+    $admin = $_POST['admin'];
+    $admin_pass = md5($_POST['admin_pass']);
+    try {
+        $pdo = new PDO("mysql:host=$db_host", $db_user, $db_pass);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->exec("CREATE DATABASE IF NOT EXISTS `$db_name` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        $pdo->exec("USE `$db_name`");
+        $pdo->exec("CREATE TABLE users(id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, password VARCHAR(32))");
+        $pdo->exec("CREATE TABLE api_keys(id INT AUTO_INCREMENT PRIMARY KEY, api_key VARCHAR(255), remark VARCHAR(255), active TINYINT(1) DEFAULT 1, flag INT)");
+        $pdo->exec("CREATE TABLE one_keys(id INT AUTO_INCREMENT PRIMARY KEY, one_key CHAR(24) UNIQUE, remark VARCHAR(255), tokens_used INT DEFAULT 0)");
+        $stmt = $pdo->prepare('INSERT INTO users(username,password) VALUES(?,?)');
+        $stmt->execute([$admin,$admin_pass]);
+        $config = ['db_host'=>$db_host,'db_user'=>$db_user,'db_pass'=>$db_pass,'db_name'=>$db_name];
+        file_put_contents($configFile, "<?php\nreturn " . var_export($config,true) . ";\n");
+        header('Location: index.php');
+        exit;
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+    }
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Setup</title>
+    <style>
+        body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:#eef;}
+        .setup{background:#fff;padding:20px;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,.1);width:300px;}
+        input{display:block;width:100%;padding:8px;margin-bottom:10px;}
+    </style>
+</head>
+<body>
+<div class="setup">
+    <form method="post">
+        <h2>Initial Setup</h2>
+        <?php if($error) echo "<p style='color:red'>$error</p>"; ?>
+        <input name="db_host" placeholder="DB Host" required>
+        <input name="db_user" placeholder="DB User" required>
+        <input name="db_pass" placeholder="DB Password">
+        <input name="db_name" placeholder="DB Name" required>
+        <input name="admin" placeholder="Admin Username" required>
+        <input name="admin_pass" type="password" placeholder="Admin Password" required>
+        <button type="submit">Create</button>
+    </form>
+</div>
+</body>
+</html>
