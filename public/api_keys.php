@@ -15,9 +15,29 @@ if (isset($_GET['delete'])) {
 $keys = $pdo->query('SELECT * FROM api_keys')->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>API Keys</title></head><body>
+<html>
+<head>
+<meta charset="utf-8">
+<title>API Keys</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js" defer></script>
+</head>
+<body>
+<div class="nav">
+    <div class="nav-links">
+        <a href="dashboard.php">Dashboard</a>
+        <a href="api_keys.php">API Keys</a>
+        <a href="one_keys.php">One Keys</a>
+        <a href="test.php">Function Test</a>
+        <a href="stats.php">Stats</a>
+        <a href="logout.php">Logout</a>
+    </div>
+    <button class="nav-toggle" onclick="toggleNav()">☰</button>
+    <button id="theme-toggle" class="nav-toggle" onclick="toggleTheme()">🌗</button>
+</div>
+<div class="content">
 <h2>API Keys</h2>
-<form method="post">
+<form method="post" onsubmit="return validateForm()">
     <input name="api_key" placeholder="API Key" required>
     <input name="remark" placeholder="Remark">
     <input name="flag" placeholder="Platform Flag" value="1">
@@ -37,5 +57,8 @@ $keys = $pdo->query('SELECT * FROM api_keys')->fetchAll(PDO::FETCH_ASSOC);
 </tr>
 <?php endforeach; ?>
 </table>
-<p><a href="dashboard.php">Back</a></p>
-</body></html>
+</div>
+<div id="loading" class="loading-overlay"><div>Loading...</div></div>
+<div class="toast-container"></div>
+</body>
+</html>

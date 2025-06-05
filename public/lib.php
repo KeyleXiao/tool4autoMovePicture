@@ -49,4 +49,10 @@ function rate_limit_check($one){
     $stmt = $pdo->prepare('UPDATE one_keys SET allowance=?, last_check=? WHERE id=?');
     $stmt->execute([$allowance, $now, $one['id']]);
 }
+
+function log_api_call($success,$tokens=0){
+    $pdo=get_pdo();
+    $stmt=$pdo->prepare('INSERT INTO api_logs(success,tokens) VALUES(?,?)');
+    $stmt->execute([$success?1:0,$tokens]);
+}
 ?>
