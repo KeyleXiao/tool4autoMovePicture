@@ -3,8 +3,16 @@ session_start();
 require __DIR__.'/lib.php';
 $configFile = __DIR__ . '/config.php';
 if (file_exists($configFile)) {
-    header('Location: index.php');
-    exit;
+    try {
+        $cfg = require $configFile;
+        $pdo = new PDO("mysql:host={$cfg['db_host']};dbname={$cfg['db_name']};charset=utf8mb4", $cfg['db_user'], $cfg['db_pass']);
+        if ($pdo->query('SELECT COUNT(*) FROM users')->fetchColumn() > 0) {
+            header('Location: index.php');
+            exit;
+        }
+    } catch (Exception $e) {
+        // allow setup if connection fails
+    }
 }
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -26,7 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare('INSERT INTO users(username,password) VALUES(?,?)');
         $stmt->execute([$admin,$admin_pass]);
         $config = ['db_host'=>$db_host,'db_user'=>$db_user,'db_pass'=>$db_pass,'db_name'=>$db_name];
-        file_put_contents($configFile, "<?php\nreturn " . var_export($config,true) . ";\n");
+        if (file_put_contents($configFile, "<?php\nreturn " . var_export($config,true) . ";\n") === false) {
+            throw new Exception('Failed to write configuration file');
+        }
         log_action('Setup completed');
         header('Location: index.php');
         exit;
