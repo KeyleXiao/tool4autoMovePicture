@@ -1,5 +1,6 @@
 <?php
 session_start();
+require __DIR__.'/lib.php';
 $configFile = __DIR__ . '/../config.php';
 if (file_exists($configFile)) {
     header('Location: index.php');
@@ -26,10 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$admin,$admin_pass]);
         $config = ['db_host'=>$db_host,'db_user'=>$db_user,'db_pass'=>$db_pass,'db_name'=>$db_name];
         file_put_contents($configFile, "<?php\nreturn " . var_export($config,true) . ";\n");
+        log_action('Setup completed');
         header('Location: index.php');
         exit;
     } catch (Exception $e) {
         $error = $e->getMessage();
+        log_action('Setup error: '.$error);
     }
 }
 ?>

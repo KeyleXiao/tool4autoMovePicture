@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+require __DIR__.'/lib.php';
+
 $configFile = __DIR__ . '/../config.php';
 if (!file_exists($configFile)) {
     header('Location: setup.php');
@@ -24,10 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user) {
         $_SESSION['user_id'] = $user['id'];
+        log_action("Login success for {$username}");
         header('Location: dashboard.php');
         exit;
     } else {
         $error = 'Invalid credentials';
+        log_action("Login failed for {$username}");
     }
 }
 ?>

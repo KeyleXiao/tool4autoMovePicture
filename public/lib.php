@@ -50,9 +50,16 @@ function rate_limit_check($one){
     $stmt->execute([$allowance, $now, $one['id']]);
 }
 
+function log_action($message){
+    $file = __DIR__ . '/../log.txt';
+    $time = date('Y-m-d H:i:s');
+    file_put_contents($file, "[$time] $message\n", FILE_APPEND | LOCK_EX);
+}
+
 function log_api_call($success,$tokens=0){
     $pdo=get_pdo();
     $stmt=$pdo->prepare('INSERT INTO api_logs(success,tokens) VALUES(?,?)');
     $stmt->execute([$success?1:0,$tokens]);
+    log_action('API call '.($success?'success':'fail')." tokens=$tokens");
 }
 ?>
