@@ -53,7 +53,14 @@ function rate_limit_check($one){
 function log_action($message){
     $file = __DIR__ . '/log.txt';
     $time = date('Y-m-d H:i:s');
-    file_put_contents($file, "[$time] $message\n", FILE_APPEND | LOCK_EX);
+    $dir = dirname($file);
+    if(is_dir($dir) && is_writable($dir)){
+        if(@file_put_contents($file, "[$time] $message\n", FILE_APPEND | LOCK_EX) === false){
+            error_log("Failed to write log: [$time] $message");
+        }
+    }else{
+        error_log("Log directory not writable: $dir");
+    }
 }
 
 function log_api_call($success,$tokens=0){

@@ -8,6 +8,7 @@ Provides a JSON API with basic rate limiting and weighted key rotation.
 1. Deploy files under a PHP-enabled web server.
 2. Access `/public/setup.php` on first run to configure database and admin account.
 3. After setup, login via `/public/index.php`.
+4. Log messages are written to `public/log.txt` and the file will be created automatically if permissions allow.
 
 ## Features
 
