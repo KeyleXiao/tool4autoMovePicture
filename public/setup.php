@@ -19,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->exec("CREATE DATABASE IF NOT EXISTS `$db_name` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
         $pdo->exec("USE `$db_name`");
         $pdo->exec("CREATE TABLE users(id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, password VARCHAR(32))");
-        $pdo->exec("CREATE TABLE api_keys(id INT AUTO_INCREMENT PRIMARY KEY, api_key VARCHAR(255), remark VARCHAR(255), active TINYINT(1) DEFAULT 1, flag INT)");
-        $pdo->exec("CREATE TABLE one_keys(id INT AUTO_INCREMENT PRIMARY KEY, one_key CHAR(24) UNIQUE, remark VARCHAR(255), tokens_used INT DEFAULT 0)");
+        $pdo->exec("CREATE TABLE api_keys(id INT AUTO_INCREMENT PRIMARY KEY, api_key VARCHAR(255), remark VARCHAR(255), active TINYINT(1) DEFAULT 1, flag INT, weight INT DEFAULT 1)");
+        $pdo->exec("CREATE TABLE one_keys(id INT AUTO_INCREMENT PRIMARY KEY, one_key CHAR(24) UNIQUE, remark VARCHAR(255), tokens_used INT DEFAULT 0, qps_limit INT DEFAULT 60, allowance FLOAT DEFAULT 60, last_check INT DEFAULT 0)");
         $stmt = $pdo->prepare('INSERT INTO users(username,password) VALUES(?,?)');
         $stmt->execute([$admin,$admin_pass]);
         $config = ['db_host'=>$db_host,'db_user'=>$db_user,'db_pass'=>$db_pass,'db_name'=>$db_name];
