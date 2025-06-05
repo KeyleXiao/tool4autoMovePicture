@@ -1,6 +1,6 @@
 <?php
 session_start();
-$config = require __DIR__ . '/../config.php';
+$config = require __DIR__ . '/config.php';
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit;

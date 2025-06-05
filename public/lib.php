@@ -2,7 +2,7 @@
 function get_pdo(){
     static $pdo=null;
     if($pdo===null){
-        $config = require __DIR__ . '/../config.php';
+        $config = require __DIR__ . '/config.php';
         $pdo = new PDO("mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4", $config['db_user'], $config['db_pass']);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
@@ -51,7 +51,7 @@ function rate_limit_check($one){
 }
 
 function log_action($message){
-    $file = __DIR__ . '/../log.txt';
+    $file = __DIR__ . '/log.txt';
     $time = date('Y-m-d H:i:s');
     file_put_contents($file, "[$time] $message\n", FILE_APPEND | LOCK_EX);
 }
